@@ -1,13 +1,27 @@
-// Veiculo class
+using System.ComponentModel.DataAnnotations;
+
 namespace EstacionamentoAPI.Models
 {
+    /// <summary>
+    /// Representa um veiculo no sistema
+    /// </summary>
     public class Veiculo
     {
+        ///ID do veículo (chave primária)
         public int Id { get; set; }
+        
+        /// Placa do veículo (tem que ser obrigatória)
+        [Required]
+        [StringLength(8)]
         public string Placa { get; set; } = string.Empty;
+
+        ///Modelo do Veículo
+        [Required]
         public string Modelo { get; set; } = string.Empty;
-        public int TipoVeiculoId { get; set; }
+
+        ///Relação com o tipo  de veículo
+        public int TipoVeiculo { get; set; }
+
         public TipoVeiculo? TipoVeiculo { get; set; }
-        public ICollection<Ticket>? Tickets { get; set; }
     }
 }
