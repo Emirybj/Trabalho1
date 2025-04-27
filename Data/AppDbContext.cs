@@ -20,7 +20,7 @@ public DbSet<Models.Veiculo> Veiculos { get; set; }
 ///<summary>
 /// Tipo de veículos cadastrados no sistema.
 ///</summary>
-public DbSet<Models.TipoVeiculo> TipoVeiculo { get; set; }
+public DbSet<Models.TipoVeiculo> TipoVeiculos { get; set; }
 
 ///<summary>
 /// Tickets de estacionamento emitidos para veículos.
@@ -35,14 +35,14 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
     // Relacionamento entre TipoVeiculo e Veiculo
     modelBuilder.Entity<Models.TipoVeiculo>()
         .Hasmany(t => t.Veiculos) // um tipo de veiculo pode ter varios veiculos
-        .withOne(v => v.TipoVeiculo) // Cada ticket pertence a um veiculo
-        .HasForeing(t => t.VeiculoId); // Relacionamento pela chave VeiculoId
+        .WithOne(v => v.TipoVeiculo) // Cada ticket pertence a um veiculo
+        .HasForeingKey(t => t.Veiculo); // Relacionamento pela chave VeiculoId
 
     // Relacionamento entre Veiculo e ticket
     modelBuilder.Entity<Models.Veiculo>()
         .HasMany(v => v.Tickets) //Um veiculo pode ter varios tickets
-        .withOne(t => t.Veiculo) // Cada ticket pertence a um veiculo
-        .HasForeingKey(t => t.VeiculoId) // relacionamento pela chave VeiculoId
+        .WithOne(t => t.Veiculo) // Cada ticket pertence a um veiculo
+        .HasForeingKey(t => t.VeiculoId); // relacionamento pela chave VeiculoId
 
     //Garantir que as placas sejam unicas
     modelBuilder.Entity<Models.Veiculo>()

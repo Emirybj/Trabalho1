@@ -1,5 +1,5 @@
-// TipoVeiculo class
-using System.ComponentModel.DataAnnotantions;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace Trabalho1.Models
 {

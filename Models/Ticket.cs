@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace EstacionamentoAPI.Models //Ticket class
+namespace Trabalho1.Models //Ticket class
 {
     public class Ticket
     {

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace Trabalho1.Models
 {
     /// <summary>
