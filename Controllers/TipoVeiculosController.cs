@@ -5,7 +5,7 @@ using EstacionamentoAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Trabalho1.Collections
+namespace TRABALHO1.Collections
 {
     ///<summary>
     /// Controlador para gerenciar tipos de veículos
