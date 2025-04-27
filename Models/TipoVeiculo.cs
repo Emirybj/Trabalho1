@@ -1,14 +1,20 @@
 // TipoVeiculo class
+using System.ComponentModel.DataAnnotantions;
+
 namespace EstacionamentoAPI.Models
 {
-    public class TipoVeiculo
+    ///<summary>
+    /// Tipo do veículo (carro, moto, etc.)
+    /// </summary>
+    public int Id { get; set; }
     {
-        public int Id { get; set; }
-        public string Nome { get; set; } = string.Empty;
-        public decimal ValorHora { get; set; }
-        public ICollection<Veiculo>? Veiculos { get; set; }
-    }
 
-}    
+    [Required]
+    public string Nome { get; set; } = string.Empty;
+
+    public List<Veiculo>? Veiculos { get; set; }
+
+    }
+}
 
     
