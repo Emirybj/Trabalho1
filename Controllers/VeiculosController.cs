@@ -13,7 +13,7 @@ namespace EstacionamentoAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
-    public class VeiculosController : controllerBase
+    public class VeiculosController : ControllerBase
     {
         private readonly AppDbContext_context;
 
@@ -26,7 +26,7 @@ namespace EstacionamentoAPI.Controllers
         /// Retorna todos os veículos
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<Enumerable<Veiculo>>> GetVeiculos()
+        public async Task<ActionResult<IEnumerable<Veiculo>>> GetVeiculos()
         {
             return await _context.Veiculos
                 .Include(v => v.TipoVeiculo)
@@ -41,7 +41,7 @@ namespace EstacionamentoAPI.Controllers
         {
             var veiculo = await _context.Veiculos
                 .Include(v => v.TipoVeiculo)
-                .FirstOrDeFaultAsync(v => v.Id == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (veiculo == null)
                 return NotFound();
@@ -53,9 +53,9 @@ namespace EstacionamentoAPI.Controllers
         /// Atualiza os dados de um veículo
         /// </summary>
         [HttpPut("{id}")]
-        public async Taks<IActionResult> PutVeicuçp(int id, Veiculo veiculo)
+        public async Taks<IActionResult> PutVeiculo(int id, Veiculo veiculo)
         {
-            if (id != veiculo.id)
+            if (id != veiculo.Id)
                 return BadRequest();
 
             //Verifica se o tipo do veiculo existe
@@ -63,14 +63,14 @@ namespace EstacionamentoAPI.Controllers
                 return BadRequest("Tipo de veículo inválido");
 
             //verifica placa duplicada
-            if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.placa && v.Id != veiculo.Id))
+            if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa && v.Id != veiculo.Id))
                 return BadRequest("Placa já cadastrada");
 
             _context.Entry(veiculo).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangeAsync();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,7 +91,7 @@ namespace EstacionamentoAPI.Controllers
         {
             //Verifica se tipo de veiculo existe
             if (!await _context.TipoVeiculo.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
-                return BadRequest("Placa já cadastrada");
+                return BadRequest("Tipo de veículo inválido");
 
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangeAsync();
@@ -111,7 +111,7 @@ namespace EstacionamentoAPI.Controllers
 
             //verifica se tem tickets ligados
             if(await _context.Tickets.AnyAsync(t => t.VeiculoId == id))
-                return BadRequest("Não é possivel excluir um veículo com tickets");
+                return BadRequest("Não é possível excluir um veículo com tickets");
 
             _context.Veiculos.Remove(veiculo);
             await _context.SaveChangeAsync();
