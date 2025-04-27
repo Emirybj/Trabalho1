@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Trabalho1.Data;
+using Trabalho1.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
