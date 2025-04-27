@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace EstacionamentoAPI.Models
+namespace Trabalho1.Models
 {
     /// <summary>
     /// Representa um veiculo no sistema

@@ -1,7 +1,7 @@
 // TipoVeiculo class
 using System.ComponentModel.DataAnnotantions;
 
-namespace EstacionamentoAPI.Models
+namespace Trabalho1.Models
 {
     ///<summary>
     /// Tipo do veículo (carro, moto, etc.)

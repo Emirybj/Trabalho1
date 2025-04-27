@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace EstacionamentoAPI
+namespace Trabalho1.Data
 {
     ///<summary>
     /// Banco de dados para acessar os dados do estacionamento.
