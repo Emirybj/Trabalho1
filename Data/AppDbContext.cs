@@ -45,6 +45,13 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
         .WithOne(t => t.Veiculo) // Cada ticket pertence a um veiculo
         .HasForeignKey(t => t.VeiculoId); // relacionamento pela chave VeiculoId
 
+    // Relacionamento entre Vaga e Veiculo
+    modelBuilder.Entity<Vaga>() 
+        .HasOne(v => v.Veiculo) //Uma vaga tem um veículo
+        .WithMany() //Um Veículo pode estar associado a muitas vagas ou nenhuma
+        .HasForeignKey(Veiculos => v.VeiculoId)//Chave estrageira
+        .OnDelete(DeleteBehavior.SetNull); //se o veículo for deletado, deixa a Vaga sem Veículo
+
     //Garantir que as placas sejam unicas
     modelBuilder.Entity<Veiculo>()
         .HasIndex(v => v.Placa)
