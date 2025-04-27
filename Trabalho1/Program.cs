@@ -1,17 +1,19 @@
 using Microsoft.EntityFrameworkCore;
-using TRABALHO1.Data;
-using TRABALHO1.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Trabalho1.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona o serviço do Entity Framework com banco SQLite
+// Adiciona o serviço do Entity Framework com SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Adiciona os serviços dos Controllers
 builder.Services.AddControllers();
 
-// Adiciona o serviço do Swagger (opcional, para testar APIs)
+// Adiciona o serviço do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -31,10 +33,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Middleware de roteamento
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
+
+

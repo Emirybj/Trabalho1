@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntetyFrameworkCore;
-using EstacionamentoAPI.Data;
-using EstacionamentoAPI.Models;
+using Microsoft.EntityFrameworkCore;
+using Trabalho1.Data;
+using Trabalho1.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace TRABALHO1.Collections
+namespace Trabalho1.Controllers
 {
-    ///<summary>
+    /// <summary>
     /// Controlador para gerenciar tipos de veículos
     /// </summary>
     [Route("api/[controller]")]
@@ -51,7 +51,7 @@ namespace TRABALHO1.Collections
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTipoVeiculo(int id, TipoVeiculo tipoVeiculo)
         {
-            if (id ! tipoVeiculo.Id)
+            if (id != tipoVeiculo.Id)
                 return BadRequest();
 
             _context.Entry(tipoVeiculo).State = EntityState.Modified;
@@ -65,7 +65,7 @@ namespace TRABALHO1.Collections
                 if (!TipoVeiculoExits(id))
                     return NotFound();
                 else
-                    throw
+                    throw;
             }
 
             return NoContent();
@@ -77,7 +77,7 @@ namespace TRABALHO1.Collections
         [HttpPost]
         public async Task<ActionResult<TipoVeiculo>> PostTipoVeiculo(TipoVeiculo tipoVeiculo)
         {
-            _context.TipoVeiculo.Add(tipoVeiculo);
+            _context.TipoVeiculos.Add(tipoVeiculo);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTipoVeiculo", new { id = tipoVeiculo.Id }, tipoVeiculo);
@@ -89,12 +89,12 @@ namespace TRABALHO1.Collections
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTipoVeiculo(int id)
         {
-            var tipoVeiculo = await _context.TipoVeiculo.FindAsync(id);
+            var tipoVeiculo = await _context.TipoVeiculos.FindAsync(id);
             if (tipoVeiculo == null)
                 return NotFound();
 
             //Verifica se existe algum veículo usando este tipo
-            var temVeículos = await _context.Veiculo.AnyAsync(v => v.TipoVeiculoId == id);
+            var temVeiculos = await _context.Veiculo.AnyAsync(v => v.TipoVeiculoId == id);
 
             _context.TipoVeiculos.Remove(tipoVeiculo);
             await _context.SaveChangesAsync();
@@ -104,7 +104,7 @@ namespace TRABALHO1.Collections
 
         private bool TipoVeiculoExits(int id)
         {
-            return _context.TipoVeiculo.Any( e => i.Id == id);
+            return _context.TipoVeiculos.Any( e => e.Id == id);
         }
     }   
 }

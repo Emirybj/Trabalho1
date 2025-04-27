@@ -21,7 +21,7 @@ namespace Trabalho1.Models
         public string Modelo { get; set; } = string.Empty;
 
         ///Relação com o tipo  de veículo
-        public int TipoVeiculo { get; set; }
+        public int TipoVeiculoId { get; set; }
 
         public TipoVeiculo? TipoVeiculo { get; set; }
     }

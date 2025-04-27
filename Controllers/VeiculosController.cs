@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using EstacionamentoAPI.Data;
-using EstacionamentoAPI.Models;
+using Trabalho1.Data;
+using Trabalho1.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +15,7 @@ namespace Trabalho1.Controllers
     [Produces("application/json")]
     public class VeiculosController : ControllerBase
     {
-        private readonly AppDbContext_context;
+        private readonly AppDbContext_ context;
 
         public VeiculosController(AppDbContext context)
         {
@@ -53,7 +53,7 @@ namespace Trabalho1.Controllers
         /// Atualiza os dados de um veículo
         /// </summary>
         [HttpPut("{id}")]
-        public async Taks<IActionResult> PutVeiculo(int id, Veiculo veiculo)
+        public async Task<IActionResult> PutVeiculo(int id, Veiculo veiculo)
         {
             if (id != veiculo.Id)
                 return BadRequest();
@@ -94,7 +94,7 @@ namespace Trabalho1.Controllers
                 return BadRequest("Tipo de veículo inválido");
 
             _context.Veiculos.Add(veiculo);
-            await _context.SaveChangeAsync();
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetVeiculo", new { id = veiculo.Id }, veiculo);
         }
@@ -114,7 +114,7 @@ namespace Trabalho1.Controllers
                 return BadRequest("Não é possível excluir um veículo com tickets");
 
             _context.Veiculos.Remove(veiculo);
-            await _context.SaveChangeAsync();
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

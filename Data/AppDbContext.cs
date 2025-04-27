@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Trabalho1.Models;
 
 namespace Trabalho1.Data
 {
@@ -15,17 +16,17 @@ public class AppDbContext : DbContext
 ///<summary>
 /// Veiculos cadastrados no estacionamento.
 ///</summary>
-public DbSet<Models.Veiculo> Veiculos { get; set; }
+public DbSet<Veiculo> Veiculos { get; set; }
 
 ///<summary>
 /// Tipo de veículos cadastrados no sistema.
 ///</summary>
-public DbSet<Models.TipoVeiculo> TipoVeiculos { get; set; }
+public DbSet<TipoVeiculo> TipoVeiculos { get; set; }
 
 ///<summary>
 /// Tickets de estacionamento emitidos para veículos.
 ///</summary>
-public DbSet<Models.Ticket> Tickets { get; set; }
+public DbSet<Ticket> Tickets { get; set; }
 
 ///<summary>
 /// Configurações do modelo de dados e seus relacionamentos.
@@ -33,19 +34,19 @@ public DbSet<Models.Ticket> Tickets { get; set; }
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     // Relacionamento entre TipoVeiculo e Veiculo
-    modelBuilder.Entity<Models.TipoVeiculo>()
-        .Hasmany(t => t.Veiculos) // um tipo de veiculo pode ter varios veiculos
+    modelBuilder.Entity<TipoVeiculo>()
+        .HasMany(t => t.Veiculos) // um tipo de veiculo pode ter varios veiculos
         .WithOne(v => v.TipoVeiculo) // Cada ticket pertence a um veiculo
-        .HasForeingKey(t => t.Veiculo); // Relacionamento pela chave VeiculoId
+        .HasForeignKey(v => v.TipoVeiculoId); // Relacionamento pela chave VeiculoId
 
     // Relacionamento entre Veiculo e ticket
-    modelBuilder.Entity<Models.Veiculo>()
+    modelBuilder.Entity<Veiculo>()
         .HasMany(v => v.Tickets) //Um veiculo pode ter varios tickets
         .WithOne(t => t.Veiculo) // Cada ticket pertence a um veiculo
-        .HasForeingKey(t => t.VeiculoId); // relacionamento pela chave VeiculoId
+        .HasForeignKey(t => t.VeiculoId); // relacionamento pela chave VeiculoId
 
     //Garantir que as placas sejam unicas
-    modelBuilder.Entity<Models.Veiculo>()
+    modelBuilder.Entity<Veiculo>()
         .HasIndex(v => v.Placa)
         .IsUnique();
     
