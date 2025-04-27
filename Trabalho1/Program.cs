@@ -5,7 +5,7 @@ using Trabalho1.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona o serviço do Entity Framework com banco SQLite
-builder.Services.AddDbContext<EstacionamentoDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Adiciona os serviços dos Controllers
@@ -20,7 +20,7 @@ var app = builder.Build();
 // Cria o banco de dados automaticamente na primeira execução
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<EstacionamentoDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
