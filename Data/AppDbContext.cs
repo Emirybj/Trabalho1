@@ -1,65 +1,49 @@
+
 using Microsoft.EntityFrameworkCore;
-using Trabalho1.Models;
+using Trabalho1.Models; // usando seus modelos já existentes
 
 namespace Trabalho1.Data
 {
-    ///<summary>
-    /// Banco de dados para acessar os dados do estacionamento.
-    ///</summary>
-public class AppDbContext : DbContext
-{
-    ///Construtor para injeção de dependência
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-{
-}
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
 
-///<summary>
-/// Veiculos cadastrados no estacionamento.
-///</summary>
-public DbSet<Veiculo> Veiculos { get; set; }
+        // DbSets para suas tabelas
+        public DbSet<Vaga> Vagas { get; set; }
+        public DbSet<Veiculo> Veiculos { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TipoVeiculo> TipoVeiculos { get; set; }
 
-///<summary>
-/// Tipo de veículos cadastrados no sistema.
-///</summary>
-public DbSet<TipoVeiculo> TipoVeiculos { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Relacionamento TipoVeiculo -> Veiculos
+            modelBuilder.Entity<TipoVeiculo>()
+                .HasMany(t => t.Veiculos)
+                .WithOne(v => v.TipoVeiculo)
+                .HasForeignKey(v => v.TipoVeiculoId);
 
-///<summary>
-/// Tickets de estacionamento emitidos para veículos.
-///</summary>
-public DbSet<Ticket> Tickets { get; set; }
+            // Relacionamento Veiculo -> Tickets
+            modelBuilder.Entity<Veiculo>()
+                .HasMany(v => v.Tickets)
+                .WithOne(t => t.Veiculo)
+                .HasForeignKey(t => t.VeiculoId);
 
-///<summary>
-/// Configurações do modelo de dados e seus relacionamentos.
-///</summary>
-protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    // Relacionamento entre TipoVeiculo e Veiculo
-    modelBuilder.Entity<TipoVeiculo>()
-        .HasMany(t => t.Veiculos) // um tipo de veiculo pode ter varios veiculos
-        .WithOne(v => v.TipoVeiculo) // Cada ticket pertence a um veiculo
-        .HasForeignKey(v => v.TipoVeiculoId); // Relacionamento pela chave VeiculoId
+            // Relacionamento Vaga -> Veiculo (vaga opcionalmente ocupada)
+            modelBuilder.Entity<Vaga>()
+                .HasOne(v => v.Veiculo)
+                .WithMany()
+                .HasForeignKey(v => v.VeiculoId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-    // Relacionamento entre Veiculo e ticket
-    modelBuilder.Entity<Veiculo>()
-        .HasMany(v => v.Tickets) //Um veiculo pode ter varios tickets
-        .WithOne(t => t.Veiculo) // Cada ticket pertence a um veiculo
-        .HasForeignKey(t => t.VeiculoId); // relacionamento pela chave VeiculoId
+            // Placa de veículo deve ser única
+            modelBuilder.Entity<Veiculo>()
+                .HasIndex(v => v.Placa)
+                .IsUnique();
 
-    // Relacionamento entre Vaga e Veiculo
-    modelBuilder.Entity<Vaga>() 
-        .HasOne(v => v.Veiculo) //Uma vaga tem um veículo
-        .WithMany() //Um Veículo pode estar associado a muitas vagas ou nenhuma
-        .HasForeignKey(Veiculos => v.VeiculoId)//Chave estrageira
-        .OnDelete(DeleteBehavior.SetNull); //se o veículo for deletado, deixa a Vaga sem Veículo
-
-    //Garantir que as placas sejam unicas
-    modelBuilder.Entity<Veiculo>()
-        .HasIndex(v => v.Placa)
-        .IsUnique();
-    
-    base.OnModelCreating(modelBuilder); 
-    
+            base.OnModelCreating(modelBuilder);
+        }
     }
-}
 }
 

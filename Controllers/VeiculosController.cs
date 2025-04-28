@@ -15,7 +15,7 @@ namespace Trabalho1.Controllers
     [Produces("application/json")]
     public class VeiculosController : ControllerBase
     {
-        private readonly AppDbContext_ context;
+        private readonly AppDbContext  _context;
 
         public VeiculosController(AppDbContext context)
         {

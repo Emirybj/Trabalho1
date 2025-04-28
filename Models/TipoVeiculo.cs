@@ -11,7 +11,7 @@ namespace Trabalho1.Models
         [Required]
         public string Nome { get; set; } = string.Empty;
 
-        public List<TipoVeiculo>? Veiculos { get; set; }
+        public List<Veiculo>? Veiculos { get; set; }
     }
 
 }

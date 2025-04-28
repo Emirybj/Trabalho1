@@ -95,6 +95,8 @@ namespace Trabalho1.Controllers
 
             //Verifica se existe algum veículo usando este tipo
             var temVeiculos = await _context.Veiculo.AnyAsync(v => v.TipoVeiculoId == id);
+            if (temVeiculos)
+                return BadRequest("Não é possível excluir tipo de veículo que está em uso.")
 
             _context.TipoVeiculos.Remove(tipoVeiculo);
             await _context.SaveChangesAsync();
@@ -102,7 +104,7 @@ namespace Trabalho1.Controllers
             return NoContent();
         }
 
-        private bool TipoVeiculoExits(int id)
+        private bool TipoVeiculosExists(int id)
         {
             return _context.TipoVeiculos.Any( e => e.Id == id);
         }

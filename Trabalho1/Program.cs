@@ -16,7 +16,7 @@ namespace Trabalho1
             builder.Services.AddControllers();
 
             // Adiciona o DbContext usando um banco de dados em memória
-            builder.Services.AddDbContext<Data.AppDbContext>(options =>
+            builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseInMemoryDatabase("EstacionamentoDB"));
 
             // Configuração do Swagger
@@ -40,3 +40,4 @@ namespace Trabalho1
         }
     }
 }
+
