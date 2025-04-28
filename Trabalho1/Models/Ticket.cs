@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Trabalho1.Models //Ticket class
+namespace Trabalho1.Models
 {
     public class Ticket
     {
         public int Id { get; set; }
 
-        [Required]
-        public DateTime Entrada { get; set; }
+        // Entrada opcional na criação do Ticket (será definida no Controller)
+        public DateTime? Entrada { get; set; }
 
         public DateTime? Saida { get; set; }
 
@@ -18,5 +18,4 @@ namespace Trabalho1.Models //Ticket class
 
         public Veiculo? Veiculo { get; set; }
     }
-
 }
