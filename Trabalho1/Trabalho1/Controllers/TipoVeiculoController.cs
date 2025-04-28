@@ -26,7 +26,7 @@ namespace Trabalho1.Controller
         /// Retorna todos os tipos de veículos
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TipoVeiculo>> GetTipoVeiculo()
+        public async Task<ActionResult<IEnumerable<TipoVeiculo>>> GetTipoVeiculo()
         {
             return await _context.TipoVeiculo.ToListAsync();
         }
@@ -96,7 +96,7 @@ namespace Trabalho1.Controller
             //Verifica se existe algum veículo usando este tipo
             var temVeiculos = await _context.Veiculo.AnyAsync(v => v.TipoVeiculoId == id);
             if (temVeiculos)
-                return BadRequest("Não é possível excluir tipo de veículo que está em uso.")
+                return BadRequest("Não é possível excluir tipo de veículo que está em uso.");
 
             _context.TipoVeiculos.Remove(tipoVeiculo);
             await _context.SaveChangesAsync();

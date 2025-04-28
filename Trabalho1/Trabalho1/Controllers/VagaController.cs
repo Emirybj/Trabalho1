@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Trabalho1.Models;
+using Trabalho1.Data;
 
 namespace Trabalho1.Controllers
 {
