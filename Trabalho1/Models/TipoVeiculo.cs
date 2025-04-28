@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 namespace Trabalho1.Models
 {
-    ///<summary>
+    
     /// Tipo do veículo (carro, moto, etc.)
-    /// </summary>
+    
     public class TipoVeiculo
     {
         public int Id { get; set; }

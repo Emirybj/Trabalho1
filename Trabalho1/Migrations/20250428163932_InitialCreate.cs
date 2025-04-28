@@ -15,9 +15,9 @@ namespace Trabalho1.Migrations
                 name: "TipoVeiculos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nome = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,11 +28,11 @@ namespace Trabalho1.Migrations
                 name: "Veiculos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Placa = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    Modelo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TipoVeiculoId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Placa = table.Column<string>(type: "TEXT", maxLength: 8, nullable: false),
+                    Modelo = table.Column<string>(type: "TEXT", nullable: false),
+                    TipoVeiculoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,12 +49,12 @@ namespace Trabalho1.Migrations
                 name: "Tickets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Entrada = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Saida = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    VeiculoId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Entrada = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Saida = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ValorTotal = table.Column<decimal>(type: "TEXT", nullable: true),
+                    VeiculoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,11 +71,11 @@ namespace Trabalho1.Migrations
                 name: "Vagas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Numero = table.Column<int>(type: "int", nullable: false),
-                    Ocupada = table.Column<bool>(type: "bit", nullable: false),
-                    VeiculoId = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Numero = table.Column<int>(type: "INTEGER", nullable: false),
+                    Ocupada = table.Column<bool>(type: "INTEGER", nullable: false),
+                    VeiculoId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
