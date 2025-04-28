@@ -19,13 +19,15 @@ var app = builder.Build();
 // Configurar o pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
+    // Swagger no ambiente de desenvolvimento
     app.UseSwagger();
     app.UseSwaggerUI();
-    
-    // Não redirecionar para HTTPS no ambiente de desenvolvimento
+
+    // No ambiente de desenvolvimento, não precisa redirecionar para HTTPS
 }
 else
 {
+    // Em produção, redirecionar para HTTPS
     app.UseHttpsRedirection();
 }
 
@@ -34,3 +36,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

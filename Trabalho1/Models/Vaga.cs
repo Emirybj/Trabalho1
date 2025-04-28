@@ -7,20 +7,18 @@ namespace Trabalho1.Models
     /// </summary>
     public class Vaga
     {
-        /// <summary>ID da vaga (chave primária)</summary>
+        /// ID da vaga (chave primária)
         public int Id { get; set; }
 
-        /// <summary>Número da vaga</summary>
-        [Required(ErrorMessage = "O número da vaga é obrigatório.")]
+        /// Número da vaga
+        [Required]
         public int Numero { get; set; }
 
-        /// <summary>Status da vaga: true = ocupada, false = livre</summary>
+        /// Status da vaga: true = ocupada, false = livre
         public bool Ocupada { get; set; } = false;
 
-        /// <summary>ID do veículo atualmente estacionado na vaga (se houver)</summary>
+        /// Veículo atualmente estacionado na vaga (se houver)
         public int? VeiculoId { get; set; }
-
-        /// <summary>Informações do veículo (se houver)</summary>
         public Veiculo? Veiculo { get; set; }
     }
 }
