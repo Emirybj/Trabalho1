@@ -5,7 +5,7 @@ using Trabalho1.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Trabalho1.Controllers
+namespace Trabalho1.Controller
 {
     /// <summary>
     /// Controlador para gerenciar tipos de veículos
