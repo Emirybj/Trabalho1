@@ -9,6 +9,7 @@ namespace Trabalho1.Models
         public int Id { get; set; }
 
         [Required]
+        [StringLength(50, MinimumLength = 3)]
         public string Nome { get; set; } = string.Empty;
 
         public List<Veiculo>? Veiculos { get; set; }

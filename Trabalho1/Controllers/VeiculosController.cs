@@ -16,10 +16,12 @@ namespace Trabalho1.Controllers
     public class VeiculosController : ControllerBase
     {
         private readonly AppDbContext _context;
+
         public VeiculosController(AppDbContext context)
         {
             _context = context;
         }
+
         ///<summary>
         /// Retorna todos os veículos
         /// </summary>
@@ -30,8 +32,9 @@ namespace Trabalho1.Controllers
                 .Include(v => v.TipoVeiculo)
                 .ToListAsync();
         }
+
         ///<summary>
-        /// Retorna um veiculo pelo ID
+        /// Retorna um veículo pelo ID
         ///</summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<Veiculo>> GetVeiculo(int id)
@@ -39,10 +42,13 @@ namespace Trabalho1.Controllers
             var veiculo = await _context.Veiculos
                 .Include(v => v.TipoVeiculo)
                 .FirstOrDefaultAsync(v => v.Id == id);
+
             if (veiculo == null)
                 return NotFound();
+
             return veiculo;
         }
+
         ///<summary>
         /// Atualiza os dados de um veículo
         /// </summary>
@@ -51,13 +57,20 @@ namespace Trabalho1.Controllers
         {
             if (id != veiculo.Id)
                 return BadRequest();
-            //Verifica se o tipo do veiculo existe
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Verifica se o tipo de veículo existe
             if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
                 return BadRequest("Tipo de veículo inválido");
-            //verifica placa duplicada
+
+            // Verifica placa duplicada
             if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa && v.Id != veiculo.Id))
                 return BadRequest("Placa já cadastrada");
+
             _context.Entry(veiculo).State = EntityState.Modified;
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -69,41 +82,54 @@ namespace Trabalho1.Controllers
                 else
                     throw;
             }
+
             return NoContent();
         }
+
         ///<summary>
-        /// Adiciona um novo veiculo
+        /// Adiciona um novo veículo
         /// </summary>
         [HttpPost]
         public async Task<ActionResult<Veiculo>> PostVeiculo(Veiculo veiculo)
         {
-            //Verifica se tipo de veiculo existe
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Verifica se tipo de veículo existe
             if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
                 return BadRequest("Tipo de veículo inválido");
+
+            // Verifica placa duplicada
+            if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa))
+                return BadRequest("Placa já cadastrada");
+
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
+
             return CreatedAtAction("GetVeiculo", new { id = veiculo.Id }, veiculo);
         }
+
         ///<summary>
-/// remove um veiculo
-/// </summary>
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteVeiculo(int id)
-{
-    var veiculo = await _context.Veiculos.FindAsync(id);
-    if (veiculo == null)
-        return NotFound();
+        /// Remove um veículo
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteVeiculo(int id)
+        {
+            var veiculo = await _context.Veiculos.FindAsync(id);
 
-    _context.Veiculos.Remove(veiculo);
-    await _context.SaveChangesAsync();
+            if (veiculo == null)
+                return NotFound();
 
-    return NoContent();
-}
+            _context.Veiculos.Remove(veiculo);
+            await _context.SaveChangesAsync();
 
-// Método auxiliar que faltava
-private bool VeiculoExists(int id)
-{
-    return _context.Veiculos.Any(e => e.Id == id);
-}
-}
+            return NoContent();
+        }
+
+        // Método auxiliar que verifica se veículo existe
+        private bool VeiculoExists(int id)
+        {
+            return _context.Veiculos.Any(e => e.Id == id);
+        }
+    }
 }

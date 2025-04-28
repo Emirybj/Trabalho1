@@ -12,6 +12,7 @@ namespace Trabalho1.Models
 
         /// Número da vaga
         [Required]
+        [Range(1, 999, ErrorMessage ="Número da vaga deve ser entr 1 e 999.")]
         public int Numero { get; set; }
 
         /// Status da vaga: true = ocupada, false = livre
