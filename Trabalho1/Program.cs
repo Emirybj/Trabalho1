@@ -1,41 +1,42 @@
+using Trabalho1.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Trabalho1.Data;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Adiciona o serviço do Entity Framework com SQLite
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Adiciona os serviços dos Controllers
-builder.Services.AddControllers();
-
-// Adiciona o serviço do Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Cria o banco de dados automaticamente na primeira execução
-using (var scope = app.Services.CreateScope())
+namespace Trabalho1
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Adiciona os controllers ao container de serviços
+            builder.Services.AddControllers();
+
+            // Adiciona o DbContext usando um banco de dados em memória
+            builder.Services.AddDbContext<Data.AppDbContext>(options =>
+                options.UseInMemoryDatabase("EstacionamentoDB"));
+
+            // Configuração do Swagger
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            var app = builder.Build();
+
+            // Configura o pipeline de requisições HTTP
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            app.Run();
+        }
+    }
 }
-
-// Configura o Swagger no ambiente de desenvolvimento
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-app.Run();
-
-
