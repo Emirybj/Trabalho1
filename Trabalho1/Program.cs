@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Trabalho1.Data;
+using System.Text.Json.Serialization; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Adicionar serviços dos controllers
-builder.Services.AddControllers();
+// Adicionando serviços dos controllers e configurando a serialização JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options => 
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true; 
+    });
 
-// Adicionar serviços do Swagger
+// Adicionando serviços do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -32,5 +38,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-
