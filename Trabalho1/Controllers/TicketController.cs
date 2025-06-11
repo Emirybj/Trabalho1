@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Trabalho1.Controllers
 {
-    [Route("api/[controller]")] // Define que as rotas serão /api/Ticket
+    [Route("api/[controller]")] 
     [ApiController]
     public class TicketController : ControllerBase
     {

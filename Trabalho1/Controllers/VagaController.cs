@@ -27,7 +27,7 @@ namespace Trabalho1.Controllers
         {
             return await _context.Vagas
                                  .Include(v => v.Tipo) // Inclui o TipoVeiculo relacionado
-                                 .ToListAsync();
+                                    .ToListAsync();
         }
 
         [HttpGet("{id}")] 
@@ -35,7 +35,7 @@ namespace Trabalho1.Controllers
         {
             var vaga = await _context.Vagas
                                      .Include(v => v.Tipo) // Inclui o TipoVeiculo ao buscar por ID
-                                     .FirstOrDefaultAsync(v => v.Id == id);
+                                        .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vaga == null)
             {

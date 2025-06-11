@@ -1,23 +1,106 @@
-#  Projeto Estacionamento - API .NET 7
+# Projeto Estacionamento:
+Sistema completo para gerenciamento de estacionamento de veículos, com back-end em .NET 7 e front-end em React + TypeScript.
 
-API REST para gerenciamento de estacionamento de veículos, desenvolvida em ASP.NET Core com banco de dados SQLite.
+## Estrutura do Projeto
+```
+Trabalho1/
+│
+├── backend/              # API ASP.NET Core (.NET 7)
+└── frontend/             # Aplicação React + TypeScript
+```
 
-##  Tecnologias Utilizadas
-- .NET 7
-- ASP.NET Core Web API
-- Entity Framework Core
-- SQLite
-- Swagger
+## Tecnologias Utilizadas
 
-##  Entidades do Sistema
-- **Veículo**: Placa, modelo e tipo.
-- **Tipo de Veículo**: Categoria como carro, moto, etc.
-- **Vaga**: Representa uma vaga no estacionamento.
-- **Ticket**: Controle de entrada, saída e valor.
+### Back-end
+- .NET 7  
+- ASP.NET Core Web API  
+- Entity Framework Core  
+- SQLite  
+- Swagger  
 
-##  Endpoints principais
+### Front-end
+- React  
+- TypeScript  
+- Axios  
+- React Router DOM  
+- CSS  
+
+## Instruções para Execução do Projeto:
+Rodando o Back-end (.NET)
+
+O back-end deve estar rodando **antes** de iniciar o front-end.
+
+1. Abra o terminal e clone o repositório:
+
+   ```bash
+   git clone https://github.com/seuusuario/seuprojeto.git
+   cd Trabalho1/backend
+   ```
+
+2. Restaure o banco e inicie a aplicação:
+
+   ```bash
+   dotnet ef database update
+   dotnet run
+   ```
+
+3. Acesse o Swagger para testar manualmente os endpoints:
+
+   ```
+   https://localhost:{porta}/swagger
+   ```
+
+### Rodando o Front-end (React):
+Com o back-end já rodando em uma aba separada do terminal:
+
+1. Abra uma nova aba no terminal:
+
+   ```bash
+   cd Trabalho1/frontend
+   npm install
+   npm start
+   ```
+
+2. O projeto será aberto automaticamente em:
+
+   ```
+   http://localhost:3000
+   ```
+## Ordem Sugerida Para Testes:
+No Swagger (Back-end)
+1. **Cadastrar Tipo de Veículo**  
+   `POST /api/TipoVeiculos`
+2. **Cadastrar Veículo**  
+   `POST /api/Veiculos`
+3. **Cadastrar Vaga**  
+   `POST /api/Vaga`
+4. **Registrar Ticket (Entrada de Veículo)**  
+   `POST /api/Ticket`
+
+### Na Web (Front-end)
+1. **Cadastrar Tipo de Veículo**  
+   [http://localhost:3000/cadastrar-tipo-veiculo](http://localhost:3000/cadastrar-tipo-veiculo)
+2. **Gerenciar Vagas**  
+   [http://localhost:3000/cadastrar-vaga](http://localhost:3000/cadastrar-vaga)
+3. **Registrar Ticket (Home)**  
+   [http://localhost:3000/](http://localhost:3000/)
+4. **Retirar Veículo**  
+   [http://localhost:3000/retirar](http://localhost:3000/retirar)
+5. **Histórico de Tickets**  
+   [http://localhost:3000/historico](http://localhost:3000/historico)
+6. **Listar Vagas**  
+   [http://localhost:3000/vagas](http://localhost:3000/vagas)
+
+## Entidades do Sistema
+- **Veículo**: Placa, modelo, tipo.  
+- **Tipo de Veículo**: Ex: Carro, Moto, etc.  
+- **Vaga**: Representa uma vaga disponível ou ocupada.  
+- **Ticket**: Entrada, saída e valor a pagar.
+
+##  Endpoints Principais (API)
 
 ### Veículos (`/api/Veiculos`)
+
 - `GET /api/Veiculos`
 - `GET /api/Veiculos/{id}`
 - `POST /api/Veiculos`
@@ -25,6 +108,7 @@ API REST para gerenciamento de estacionamento de veículos, desenvolvida em ASP.
 - `DELETE /api/Veiculos/{id}`
 
 ### Tipos de Veículo (`/api/TipoVeiculos`)
+
 - `GET /api/TipoVeiculos`
 - `GET /api/TipoVeiculos/{id}`
 - `POST /api/TipoVeiculos`
@@ -32,6 +116,7 @@ API REST para gerenciamento de estacionamento de veículos, desenvolvida em ASP.
 - `DELETE /api/TipoVeiculos/{id}`
 
 ### Vagas (`/api/Vaga`)
+
 - `GET /api/Vaga`
 - `GET /api/Vaga/Livres`
 - `GET /api/Vaga/{id}`
@@ -40,38 +125,19 @@ API REST para gerenciamento de estacionamento de veículos, desenvolvida em ASP.
 - `DELETE /api/Vaga/{id}`
 
 ### Tickets (`/api/Ticket`)
+
 - `GET /api/Ticket`
 - `GET /api/Ticket/{id}`
 - `POST /api/Ticket`
 - `PUT /api/Ticket/{id}`
 
-##  Regras de Negócio
-- Um veículo só pode ter um ticket aberto por vez.
-- Vagas precisam estar livres para serem usadas.
-- Cobrança: R$5,00 por hora (arredondado para cima).
-- Não excluir tipo de veículo em uso.
-- Não excluir vaga ocupada.
+## Regras de Negócio
 
-##  Como Rodar o Projeto
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/seuusuario/seuprojeto.git
-
-    cd Trabalho1
-    dotnet ef database update
-    dotnet run
-    https://localhost:{porta}/swagger
-    
-## Ordem Sugerida Para Testar no Swagger
-1. Criar Tipo de Veículo
-   POST /api/TipoVeiculos
-2. Criar Veículo
-    POST /api/Veiculos
-3. Criar Vaga
-    POST /api/Vaga
-4. Registrar Ticket
-    POST /api/Ticket
-
+- Um veículo só pode ter **um ticket ativo por vez**.  
+- Só é possível usar **vagas livres**.  
+- **Cobrança**: R$5,00 por hora (arredondado para cima).  
+- **Não excluir** tipo de veículo se estiver em uso.  
+- **Não excluir** vaga ocupada.
 
 
 
