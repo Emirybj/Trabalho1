@@ -3,148 +3,170 @@ using Microsoft.EntityFrameworkCore;
 using Trabalho1.Data;
 using Trabalho1.Models;
 using System.Collections.Generic;
-using System.Linq; // Adicione este using
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Trabalho1.Controllers
 {
     ///<summary>
-    /// Controlador para gerenciar ve\u00EDculos
+    /// Controlador para gerenciar veículos
     ///</summary>
-    [Route("api/[controller]")]
-    [ApiController]
-    [Produces("application/json")]
+    [Route("api/[controller]")] // Define a rota base para este controlador como 'api/Veiculos'
+    [ApiController] // Indica que esta classe é um controlador de API e habilita comportamentos específicos de API
+    [Produces("application/json")] // Especifica que as ações deste controlador produzirão respostas no formato JSON
     public class VeiculosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _context; // Declara uma variável somente leitura para o contexto do banco de dados
 
+        /// <summary>
+        /// Construtor da classe VeiculosController.
+        /// Inicializa o controlador com o contexto do banco de dados.
+        /// </summary>
+        /// <param name="context">O contexto do banco de dados da aplicação, injetado via DI.</param>
         public VeiculosController(AppDbContext context)
         {
-            _context = context;
+            _context = context; // Atribui o contexto do banco de dados injetado à variável local
         }
 
         ///<summary>
-        /// Retorna todos os ve\u00EDculos
+        /// Retorna todos os veículos
         /// </summary>
-        [HttpGet]
+        /// <returns>Uma lista de veículos, incluindo seus tipos de veículo associados.</returns>
+        [HttpGet] // Mapeia este método para requisições HTTP GET
         public async Task<ActionResult<IEnumerable<Veiculo>>> GetVeiculos()
         {
+            // Retorna todos os veículos do banco de dados, incluindo os dados do tipo de veículo relacionado.
             return await _context.Veiculos
-                .Include(v => v.TipoVeiculo)
-                .ToListAsync();
+                .Include(v => v.TipoVeiculo) // Inclui os dados da entidade TipoVeiculo relacionada
+                .ToListAsync(); // Converte a consulta para uma lista assincronamente
         }
 
         ///<summary>
-        /// Retorna um ve\u00EDculo pelo ID
+        /// Retorna um veículo pelo ID
         ///</summary>
-        [HttpGet("{id}")]
+        /// <param name="id">O ID do veículo a ser retornado.</param>
+        /// <returns>Um veículo específico ou NotFound se não for encontrado.</returns>
+        [HttpGet("{id}")] // Mapeia este método para requisições HTTP GET com um parâmetro de ID na rota
         public async Task<ActionResult<Veiculo>> GetVeiculo(int id)
         {
+            // Busca um veículo pelo ID, incluindo os dados do tipo de veículo relacionado.
             var veiculo = await _context.Veiculos
-                .Include(v => v.TipoVeiculo)
-                .FirstOrDefaultAsync(v => v.Id == id);
+                .Include(v => v.TipoVeiculo) // Inclui os dados da entidade TipoVeiculo relacionada
+                .FirstOrDefaultAsync(v => v.Id == id); // Encontra o primeiro veículo com o ID correspondente
 
             if (veiculo == null)
-                return NotFound();
+                return NotFound(); // Retorna 404 Not Found se o veículo não for encontrado
 
-            return veiculo;
+            return veiculo; // Retorna o veículo encontrado
         }
 
         ///<summary>
-        /// Atualiza os dados de um ve\u00EDculo
+        /// Atualiza os dados de um veículo
         /// </summary>
-        [HttpPut("{id}")]
+        /// <param name="id">O ID do veículo a ser atualizado.</param>
+        /// <param name="veiculo">Os dados do veículo atualizado.</param>
+        /// <returns>NoContent se a atualização for bem-sucedida, BadRequest ou NotFound caso contrário.</returns>
+        [HttpPut("{id}")] // Mapeia este método para requisições HTTP PUT com um parâmetro de ID na rota
         public async Task<IActionResult> PutVeiculo(int id, Veiculo veiculo)
         {
+            // Verifica se o ID da rota corresponde ao ID do objeto veículo
             if (id != veiculo.Id)
-                return BadRequest();
+                return BadRequest(); // Retorna 400 BadRequest se os IDs não coincidirem
 
+            // Verifica a validade do modelo (validações de dados definidas no modelo Veiculo)
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ModelState); // Retorna 400 BadRequest com os erros de validação
 
-            // Verifica se o tipo de ve\u00EDculo existe
+            // Verifica se o TipoVeiculoId fornecido existe no banco de dados
             if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
-                return BadRequest("Tipo de ve\u00EDculo inv\u00E1lido");
+                return BadRequest("Tipo de veículo inválido"); // Retorna 400 BadRequest se o tipo de veículo for inválido
 
-            // Verifica placa duplicada para outros ve\u00EDculos (excluindo o ve\u00EDculo atual)
+            // Verifica se a placa já está cadastrada para outro veículo (evita placas duplicadas)
             if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa && v.Id != veiculo.Id))
-                return BadRequest("Placa j\u00E1 cadastrada por outro ve\u00EDculo."); // Mensagem mais clara
+                return BadRequest("Placa já cadastrada por outro veículo."); // Retorna 400 BadRequest se a placa já existir
 
+            // Marca o estado da entidade como Modificada para que o EF a atualize no banco de dados
             _context.Entry(veiculo).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException) // Captura exceções de concorrência (ex: registro excluído por outro processo)
             {
-                if (!VeiculoExists(id))
-                    return NotFound();
+                if (!VeiculoExists(id)) // Verifica se o veículo ainda existe
+                    return NotFound(); // Retorna 404 Not Found se o veículo não existir mais
                 else
-                    throw;
+                    throw; // Lança a exceção se for outro problema de concorrência
             }
 
-            return NoContent();
+            return NoContent(); // Retorna 204 NoContent, indicando que a atualização foi bem-sucedida sem conteúdo para retornar
         }
 
         ///<summary>
-        /// Adiciona um novo ve\u00EDculo
+        /// Adiciona um novo veículo
         /// </summary>
-        [HttpPost]
+        /// <param name="veiculo">Os dados do novo veículo a ser adicionado.</param>
+        /// <returns>O veículo recém-criado com seu ID, ou BadRequest se a criação falhar.</returns>
+        [HttpPost] // Mapeia este método para requisições HTTP POST
         public async Task<ActionResult<Veiculo>> PostVeiculo(Veiculo veiculo)
         {
+            // Verifica a validade do modelo
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ModelState); // Retorna 400 BadRequest com os erros de validação
 
-            // Verifica se tipo de ve\u00EDculo existe
+            // Verifica se o TipoVeiculoId fornecido existe no banco de dados
             if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
-                return BadRequest("Tipo de ve\u00EDculo inv\u00E1lido");
+                return BadRequest("Tipo de veículo inválido"); // Retorna 400 BadRequest se o tipo de veículo for inválido
 
-            // === A REGRA DE VERIFICA\u00C7\u00C3O DE PLACA DUPLICADA ===
-            // Esta \u00E9 a linha que causa o problema se o ve\u00EDculo n\u00E3o foi REALMENTE removido ou se h\u00E1 um ticket \u00F3rf\u00E3o.
+            // Verifica se a placa já está cadastrada
             if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa))
-                return BadRequest("Placa j\u00E1 cadastrada."); // Mensagem de erro que voc\u00EA est\u00E1 a ver.
+                return BadRequest("Placa já cadastrada."); // Retorna 400 BadRequest se a placa já existir
 
-            _context.Veiculos.Add(veiculo);
-            await _context.SaveChangesAsync();
+            _context.Veiculos.Add(veiculo); // Adiciona o novo veículo ao contexto
+            await _context.SaveChangesAsync(); // Salva o novo veículo no banco de dados
 
+            // Retorna 201 CreatedAtAction com o novo veículo e um cabeçalho de localização para o recurso criado
             return CreatedAtAction("GetVeiculo", new { id = veiculo.Id }, veiculo);
         }
 
         ///<summary>
-        /// Remove um ve\u00EDculo
+        /// Remove um veículo
         /// </summary>
-        [HttpDelete("{id}")]
+        /// <param name="id">O ID do veículo a ser removido.</param>
+        /// <returns>NoContent se a remoção for bem-sucedida, NotFound ou BadRequest caso contrário.</returns>
+        [HttpDelete("{id}")] // Mapeia este método para requisições HTTP DELETE com um parâmetro de ID na rota
         public async Task<IActionResult> DeleteVeiculo(int id)
         {
+            // Busca o veículo pelo ID
             var veiculo = await _context.Veiculos.FindAsync(id);
 
+            // Verifica se o veículo existe
             if (veiculo == null)
-                return NotFound("Ve\u00EDculo n\u00E3o encontrado."); // Mensagem mais espec\u00EDfica
+                return NotFound("Veículo não encontrado."); // Retorna 404 Not Found se o veículo não for encontrado
 
-            // === NOVO: Verifique se h\u00E1 tickets relacionados a este ve\u00EDculo ===
-            // Se h\u00E1 tickets para este ve\u00EDculo, n\u00E3o podemos simplesmente apag\u00E1-lo diretamente,
-            // ou a base de dados pode ficar inconsistente (tickets com VeiculoId inv\u00E1lido).
+            // Verifica se há tickets relacionados a este veículo
             var hasRelatedTickets = await _context.Tickets.AnyAsync(t => t.VeiculoId == id);
             if (hasRelatedTickets)
             {
-                // Op\u00E7\u00E3o 1 (Mais segura): Retornar erro e exigir remo\u00E7\u00E3o dos tickets primeiro
-                return BadRequest("N\u00E3o \u00E9 poss\u00EDvel excluir o ve\u00EDculo, pois ele possui tickets no hist\u00F3rico.");
-
-                // Op\u00E7\u00E3o 2 (Mais complexa, requer revis\u00E3o de l\u00F3gica): Apagar tickets em cascata ou desvincular
-                // Para simplificar, a op\u00E7\u00E3o 1 \u00E9 mais clara para o usu\u00E1rio.
+                // Retorna 400 BadRequest se existirem tickets associados, impedindo a exclusão
+                return BadRequest("Não é possível excluir o veículo, pois ele possui tickets no histórico.");
             }
 
-            _context.Veiculos.Remove(veiculo);
-            await _context.SaveChangesAsync();
+            _context.Veiculos.Remove(veiculo); // Remove o veículo do contexto
+            await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
 
-            return NoContent();
+            return NoContent(); // Retorna 204 NoContent, indicando que a exclusão foi bem-sucedida
         }
 
-        // M\u00E9todo auxiliar que verifica se ve\u00EDculo existe
+        /// <summary>
+        /// Verifica se um veículo com o ID especificado existe no banco de dados.
+        /// </summary>
+        /// <param name="id">O ID do veículo a ser verificado.</param>
+        /// <returns>True se o veículo existir, False caso contrário.</returns>
         private bool VeiculoExists(int id)
         {
-            return _context.Veiculos.Any(e => e.Id == id);
+            return _context.Veiculos.Any(e => e.Id == id); // Retorna verdadeiro se algum veículo com o ID existir
         }
     }
 }

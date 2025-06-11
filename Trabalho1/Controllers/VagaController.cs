@@ -22,7 +22,6 @@ namespace Trabalho1.Controllers
             _logger = logger;
         }
 
-        // GET: api/Vaga
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vaga>>> GetVagas()
         {
@@ -31,8 +30,7 @@ namespace Trabalho1.Controllers
                                  .ToListAsync();
         }
 
-        // GET: api/Vaga/5
-        [HttpGet("{id}")] // O nome da ação é "GetVaga" por conta do padrão
+        [HttpGet("{id}")] 
         public async Task<ActionResult<Vaga>> GetVaga(int id)
         {
             var vaga = await _context.Vagas
@@ -54,7 +52,6 @@ namespace Trabalho1.Controllers
             return await _context.Vagas.Where(v => !v.Ocupada).ToListAsync();
         }
 
-        // POST: api/Vaga
         [HttpPost]
         public async Task<ActionResult<Vaga>> PostVaga(Vaga vaga)
         {
@@ -154,7 +151,6 @@ namespace Trabalho1.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Vaga/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVaga(int id)
         {

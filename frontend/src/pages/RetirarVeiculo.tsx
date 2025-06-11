@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import './retirar-veiculo-modulo.css'; // Importa o CSS específico para este componente
+import './retirar-veiculo-modulo.css'; 
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api";
 

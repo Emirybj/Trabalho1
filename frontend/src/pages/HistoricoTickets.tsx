@@ -1,28 +1,38 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Ticket } from '../models/Ticket';
-import { Veiculo } from '../models/Veiculo'; // Importe o modelo Veiculo para tipagem correta
+import { Ticket } from '../models/Ticket'; 
+import { Veiculo } from '../models/Veiculo'; 
 import './historico-tickets-modulo.css';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api";
 
-// Interface para os dados brutos como vêm do backend (agora sabemos que é camelCase por padrão do C#)
+/**
+ * @interface RawTicketBackend
+ * @description Define como os dados de ticket chegam **diretamente do backend**.
+ * É diferente do modelo `Ticket` do frontend porque o backend pode ter nomes de campos ou estruturas ligeiramente diferentes.
+ */
 interface RawTicketBackend {
     id: number;
     veiculoId: number;
     vagaId: number | null;
-    entrada: string;       // Propriedade em camelCase no backend (confirmado pelo JSON)
-    saida?: string | null; // Propriedade em camelCase no backend
-    valorTotal: number | null; // Propriedade em camelCase no backend
-    pago: boolean;         // Propriedade em camelCase no backend
-    veiculo?: { // Tipagem para o objeto Veiculo vindo do backend (com placa)
+    entrada: string; // Data de entrada vinda do backend
+    saida?: string | null; // Data de saída vinda do backend
+    valorTotal: number | null;
+    pago: boolean;
+    /**
+     * @property veiculo - Detalhes do veículo aninhado, conforme retornado pelo backend.
+     */
+    veiculo?: {
         id: number;
         placa: string;
         modelo: string;
         tipoVeiculoId: number;
         tipoVeiculo?: any;
     };
-    vaga?: { // Tipagem para o objeto Vaga vindo do backend
+    /**
+     * @property vaga - Detalhes da vaga aninhada, conforme retornado pelo backend.
+     */
+    vaga?: {
         id: number;
         numero: number;
         // Adicione outras propriedades da Vaga se precisar
@@ -30,19 +40,18 @@ interface RawTicketBackend {
 }
 
 /**
- * Função auxiliar para transformar os dados do ticket do formato do backend (camelCase)
- * para o formato esperado pelo modelo Ticket.ts no frontend (camelCase, com 'dataEntrada', etc.).
- * Principalmente para mapear 'entrada' para 'dataEntrada'.
- * @param rawTicket O objeto de ticket recebido diretamente do backend.
- * @returns Um objeto Ticket formatado para o frontend.
+ * Função auxiliar para converter o formato do ticket do backend (`RawTicketBackend`)
+ * para o formato do nosso frontend (`Ticket`).
+ * @param rawTicket O objeto de ticket recebido do backend.
+ * @returns Um objeto Ticket formatado.
  */
 const transformTicketData = (rawTicket: RawTicketBackend): Ticket => {
     return {
         id: rawTicket.id,
         veiculoId: rawTicket.veiculoId,
         vagaId: rawTicket.vagaId,
-        dataEntrada: rawTicket.entrada, // <--- CORREÇÃO AQUI: Mapeia 'entrada' para 'dataEntrada'
-        dataSaida: rawTicket.saida,     // Mapeia 'saida' para 'dataSaida'
+        dataEntrada: rawTicket.entrada, // Mapeia 'entrada' para 'dataEntrada'
+        dataSaida: rawTicket.saida, // Mapeia 'saida' para 'dataSaida'
         valorTotal: rawTicket.valorTotal !== null ? rawTicket.valorTotal : 0,
         pago: rawTicket.pago,
         veiculo: rawTicket.veiculo ? {
@@ -50,7 +59,6 @@ const transformTicketData = (rawTicket: RawTicketBackend): Ticket => {
             placa: rawTicket.veiculo.placa,
             modelo: rawTicket.veiculo.modelo,
             tipoVeiculoId: rawTicket.veiculo.tipoVeiculoId,
-            // Adicione outras propriedades do veículo se o modelo Veiculo.ts as tiver
         } as Veiculo : undefined,
     };
 };
@@ -63,8 +71,9 @@ function HistoricoTickets() {
     useEffect(() => {
         setCarregando(true);
         setErro('');
-        axios.get<RawTicketBackend[]>(`${API_BASE_URL}/Ticket`)
+        axios.get<RawTicketBackend[]>(`${API_BASE_URL}/Ticket`) // Busca dados do backend usando o tipo RawTicketBackend
             .then(response => {
+                // Transforma os dados recebidos para o formato de Ticket do frontend
                 const transformedTickets = response.data.map(transformTicketData);
                 setTickets(transformedTickets);
             })

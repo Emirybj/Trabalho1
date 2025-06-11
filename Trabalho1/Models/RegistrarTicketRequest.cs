@@ -1,6 +1,6 @@
 namespace Trabalho1.Models
 {
-    // DTO para receber os dados do frontend ao registrar um ticket
+    //  para receber os dados do frontend ao registrar um ticket
     public class RegistrarTicketRequest
     {
         public string Placa { get; set; } = string.Empty;

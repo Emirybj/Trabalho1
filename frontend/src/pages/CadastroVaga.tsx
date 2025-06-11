@@ -13,8 +13,6 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api
 function CadastroVaga() {
     // Estados para o formulário de Cadastro
     const [numero, setNumero] = useState<string>('');
-    const [andar, setAndar] = useState<string>('');
-    const [setor, setSetor] = useState<string>('');
     const [tipoVeiculoId, setTipoVeiculoId] = useState<number | undefined>(undefined);
     const [tipos, setTipos] = useState<TipoVeiculo[]>([]); // Para o dropdown de tipos
     const [carregandoTipos, setCarregandoTipos] = useState<boolean>(true);
@@ -99,8 +97,6 @@ function CadastroVaga() {
                 ocupada: false,
                 veiculoId: null,
                 tipoVeiculoId: tipoVeiculoId,
-                andar: andar.trim() === '' ? null : andar.trim(),
-                setor: setor.trim() === '' ? null : setor.trim(),
             };
 
             await axios.post(`${API_BASE_URL}/Vaga`, novaVaga);
@@ -108,8 +104,6 @@ function CadastroVaga() {
             setSucesso(`Vaga ${numeroVaga} cadastrada com sucesso!`);
             // Limpa o formulário e recarrega a lista de vagas
             setNumero('');
-            setAndar('');
-            setSetor('');
             setTipoVeiculoId(tipos.length > 0 ? tipos[0].id : undefined);
             carregarVagasExistentes(); // Recarrega a lista para mostrar a nova vaga
 
@@ -149,10 +143,10 @@ function CadastroVaga() {
     // Renderização do Componente
 
     return (
-        <div className="management-container"> {/* Novo container principal */}
+        <div className="management-container">
             <h1 className="management-title">Gestão de Vagas</h1>
 
-            {}
+            {/* Mensagens de feedback */}
             {erro && (
                 <div className="alert error-alert" role="alert">
                     <strong>Erro!</strong> {erro}
@@ -182,26 +176,6 @@ function CadastroVaga() {
                                 min="1"
                                 max="999"
                                 placeholder="Ex: 101"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="andarVaga">Andar (Opcional):</label>
-                            <input
-                                type="text"
-                                id="andarVaga"
-                                value={andar}
-                                onChange={(e) => setAndar(e.target.value)}
-                                placeholder="Ex: Térreo, Subsolo 1"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="setorVaga">Setor (Opcional):</label>
-                            <input
-                                type="text"
-                                id="setorVaga"
-                                value={setor}
-                                onChange={(e) => setSetor(e.target.value)}
-                                placeholder="Ex: A, B, C"
                             />
                         </div>
                         <div className="form-group">
@@ -258,9 +232,8 @@ function CadastroVaga() {
                                     <th>Número</th>
                                     <th>Tipo</th>
                                     <th>Status</th>
-                                    <th>Andar</th>
-                                    <th>Setor</th>
-                                    <th>Ações</th> {}
+                                    {/* REMOVIDAS: Colunas Andar e Setor */}
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -274,8 +247,7 @@ function CadastroVaga() {
                                                 {vaga.ocupada ? "Ocupada" : "Livre"}
                                             </span>
                                         </td>
-                                        <td data-label="Andar">{vaga.andar || "-"}</td>
-                                        <td data-label="Setor">{vaga.setor || "-"}</td>
+                                        {/* REMOVIDAS: Células de dados para Andar e Setor */}
                                         <td data-label="Ações">
                                             <button 
                                                 onClick={() => handleDelete(vaga.id)} 

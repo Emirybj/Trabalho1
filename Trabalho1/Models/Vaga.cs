@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema; // Adicione este using
-
+    using System.ComponentModel.DataAnnotations.Schema; 
     namespace Trabalho1.Models
     {
         /// <summary>

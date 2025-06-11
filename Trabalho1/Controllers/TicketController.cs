@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Trabalho1.Models; // Necessário para Ticket e RegistrarTicketRequest
+using Trabalho1.Models; 
 using Trabalho1.Data;
-using Microsoft.Extensions.Logging; // Necessário para ILogger
+using Microsoft.Extensions.Logging; 
 
 namespace Trabalho1.Controllers
 {
@@ -17,7 +17,6 @@ namespace Trabalho1.Controllers
         private readonly AppDbContext _context;
         private readonly ILogger<TicketController> _logger; // Injeção do logger para depuração
 
-        // Construtor: Certifique-se de que ILogger<TicketController> está injetado
         public TicketController(AppDbContext context, ILogger<TicketController> logger)
         {
             _context = context;
@@ -54,7 +53,6 @@ namespace Trabalho1.Controllers
             return ticket;
         }
 
-        // POST: api/Ticket
         // Este método agora recebe um RegistrarTicketRequest e gerencia o veículo internamente.
         [HttpPost]
         public async Task<ActionResult<Ticket>> PostTicket([FromBody] RegistrarTicketRequest request) // <--- ESTE É O NOVO PARÂMETRO!
@@ -86,11 +84,10 @@ namespace Trabalho1.Controllers
                 else
                 {
                     _logger.LogInformation("Veículo com placa {Placa} já existe. Usando veículo existente com ID: {VeiculoId}", request.Placa, veiculo.Id);
-                    // Opcional: Atualizar Modelo ou TipoVeiculoId se for diferente
                     // Se você não quer que as informações do veículo sejam atualizadas aqui, pode remover esta parte.
                 }
 
-                // 2. Verificar se o veículo já tem um ticket aberto
+                // Verifica se o veículo já tem um ticket aberto
                 var ticketAberto = await _context.Tickets
                     .FirstOrDefaultAsync(t => t.VeiculoId == veiculo.Id && t.Saida == null);
                 
@@ -101,7 +98,7 @@ namespace Trabalho1.Controllers
                     return BadRequest("Este veículo já está estacionado.");
                 }
 
-                // 3. Buscar uma vaga livre
+                // Busca uma vaga livre
                 var vagaDisponivel = await _context.Vagas
                     .FirstOrDefaultAsync(v => !v.Ocupada);
 
@@ -112,7 +109,7 @@ namespace Trabalho1.Controllers
                     return BadRequest("Estacionamento lotado.");
                 }
 
-                // 4. Criar o novo ticket
+                // Criar o novo ticket
                 var newTicket = new Ticket
                 {
                     VeiculoId = veiculo.Id,
@@ -125,10 +122,10 @@ namespace Trabalho1.Controllers
                 _context.Tickets.Add(newTicket);
                 await _context.SaveChangesAsync(); // Salva o ticket para obter o ID
 
-                // 5. Atualizar a vaga para ocupada e associar o veículo
+                // Atualiza a vaga para ocupada e associar o veículo
                 vagaDisponivel.Ocupada = true;
                 vagaDisponivel.VeiculoId = veiculo.Id;
-                _context.Vagas.Update(vagaDisponivel); // Marca a vaga para atualização
+                _context.Vagas.Update(vagaDisponivel); 
                 await _context.SaveChangesAsync(); // Salva as alterações na vaga
 
                 await transaction.CommitAsync(); // Confirma todas as operações da transação
@@ -144,7 +141,7 @@ namespace Trabalho1.Controllers
             }
         }
 
-        // PUT: api/Ticket/5 (usado para finalizar um ticket)
+        // usa para finalizar um ticket
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTicket(int id, Ticket ticket)
         {
@@ -181,7 +178,6 @@ namespace Trabalho1.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Ticket/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTicket(int id)
         {
@@ -197,7 +193,7 @@ namespace Trabalho1.Controllers
             return NoContent();
         }
 
-        // POST: api/Ticket/retirar (Endpoint específico para retirar o veículo, baseado na placa)
+        // Endpoint específico para retirar o veículo, baseado na placa
         [HttpPost("retirar")]
         public async Task<ActionResult<Ticket>> RetirarVeiculo([FromBody] RetirarVeiculoRequest request)
         {
@@ -260,7 +256,7 @@ namespace Trabalho1.Controllers
         }
     }
 
-    // Classe de Request para o endpoint de RetirarVeiculo (recebe a placa)
+    // Classe de Request para o endpoint de RetirarVeiculo recebe a placa
     public class RetirarVeiculoRequest
     {
         public string Placa { get; set; } = string.Empty;
