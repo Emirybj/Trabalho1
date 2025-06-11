@@ -5,8 +5,8 @@ Sistema completo para gerenciamento de estacionamento de veículos, com back-end
 ```
 Trabalho1/
 │
-├── backend/              # API ASP.NET Core (.NET 7)
-└── frontend/             # Aplicação React + TypeScript
+├── frontend/              # Aplicação React + TypeScript
+└── Trabalho1/             # API ASP.NET Core (.NET 7)
 ```
 
 ## Tecnologias Utilizadas
@@ -135,7 +135,7 @@ No Swagger (Back-end)
 
 - Um veículo só pode ter **um ticket ativo por vez**.  
 - Só é possível usar **vagas livres**.  
-- **Cobrança**: R$5,00 por hora (arredondado para cima).  
+- **Cobrança**: R$3,00 por hora (arredondado para cima).  
 - **Não excluir** tipo de veículo se estiver em uso.  
 - **Não excluir** vaga ocupada.
 
