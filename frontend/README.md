@@ -1,46 +1,60 @@
-# Getting Started with Create React App
+## Projeto Estacionamento - Front-end React
+Interface de usuário para o sistema de gerenciamento de estacionamento de veículos.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Tecnologias Utilizadas:
+React
+TypeScript
+Axios
+React Router DOM
+CSS
 
-## Available Scripts
+## Rotas Principais (Páginas):
+- / (Home - Registrar Ticket)
+- /vagas (Listar Vagas)
+- /retirar (Retirar Veículo)
+- /historico (Histórico de Tickets)
+- /cadastrar-tipo-veiculo (Cadastrar Tipo de Veículo)
+- /cadastrar-vaga (Gerenciar Vagas)
 
-In the project directory, you can run:
+## Como Rodar o Projeto: 
+- Pré-requisitos:
+Node.js e npm (ou Yarn) instalados.
+O Back-end API (.NET 7) deve estar rodando em http://localhost:5285.
+Clone o repositório (se ainda não o fez):
+git clone https://github.com/seuusuario/seuprojeto.git
 
-### `npm start`
+- Navegue para a pasta do Front-end:
+cd seuprojeto/frontend
+Instale as dependências:
+npm install
+ou
+yarn install
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Configure a URL da API:
+- Na pasta raiz do Front-end (frontend/), crie um arquivo chamado .env e adicione a seguinte linha:
+REACT_APP_API_URL=http://localhost:5285/api
+Inicie o Back-end (em um terminal SEPARADO):
+Abra uma nova janela do terminal e navegue até a pasta raiz do seu projeto Back-end (ex: seuprojeto/Trabalho1).
+dotnet run
+(O Back-end geralmente será executado em https://localhost:5285 ou http://localhost:5285).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Inicie a aplicação React (em OUTRO terminal SEPARADO):
+Volte para o terminal onde você está na pasta Front-end (seuprojeto/frontend).
+npm start
+ou
+yarn start
+A aplicação será aberta automaticamente no seu navegador em http://localhost:3000.
 
-### `npm test`
+## Ordem Sugerida Para Testar:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Cadastrar Tipo de Veículo: http://localhost:3000/cadastrar-tipo-veiculo
 
-### `npm run build`
+Gerenciar Vagas: http://localhost:3000/cadastrar-vaga
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Registrar Ticket (Home): http://localhost:3000/
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Retirar Veículo: http://localhost:3000/retirar
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Histórico de Tickets: http://localhost:3000/historico
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Listar Vagas: http://localhost:3000/vagas

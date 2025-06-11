@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Trabalho1.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialFinalReset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace Trabalho1.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", nullable: false)
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,7 +31,7 @@ namespace Trabalho1.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Placa = table.Column<string>(type: "TEXT", maxLength: 8, nullable: false),
-                    Modelo = table.Column<string>(type: "TEXT", nullable: false),
+                    Modelo = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     TipoVeiculoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -46,6 +46,35 @@ namespace Trabalho1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Vagas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Numero = table.Column<int>(type: "INTEGER", nullable: false),
+                    Ocupada = table.Column<bool>(type: "INTEGER", nullable: false),
+                    VeiculoId = table.Column<int>(type: "INTEGER", nullable: true),
+                    TipoVeiculoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Andar = table.Column<string>(type: "TEXT", nullable: true),
+                    Setor = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vagas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vagas_TipoVeiculos_TipoVeiculoId",
+                        column: x => x.TipoVeiculoId,
+                        principalTable: "TipoVeiculos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vagas_Veiculos_VeiculoId",
+                        column: x => x.VeiculoId,
+                        principalTable: "Veiculos",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tickets",
                 columns: table => new
                 {
@@ -54,11 +83,19 @@ namespace Trabalho1.Migrations
                     Entrada = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Saida = table.Column<DateTime>(type: "TEXT", nullable: true),
                     ValorTotal = table.Column<decimal>(type: "TEXT", nullable: true),
-                    VeiculoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    VeiculoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    VagaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Pago = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Vagas_VagaId",
+                        column: x => x.VagaId,
+                        principalTable: "Vagas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tickets_Veiculos_VeiculoId",
                         column: x => x.VeiculoId,
@@ -67,30 +104,20 @@ namespace Trabalho1.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Vagas",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Numero = table.Column<int>(type: "INTEGER", nullable: false),
-                    Ocupada = table.Column<bool>(type: "INTEGER", nullable: false),
-                    VeiculoId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Vagas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Vagas_Veiculos_VeiculoId",
-                        column: x => x.VeiculoId,
-                        principalTable: "Veiculos",
-                        principalColumn: "Id");
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_VagaId",
+                table: "Tickets",
+                column: "VagaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_VeiculoId",
                 table: "Tickets",
                 column: "VeiculoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vagas_TipoVeiculoId",
+                table: "Vagas",
+                column: "TipoVeiculoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vagas_VeiculoId",

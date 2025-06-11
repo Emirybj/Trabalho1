@@ -9,30 +9,47 @@ namespace Trabalho1.Data
         {
         }
 
-        public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<TipoVeiculo> TipoVeiculos { get; set; }
+        public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<Vaga> Vagas { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
-            // Configuração das relações entre entidades
-            modelBuilder.Entity<Veiculo>()
-                .HasOne(v => v.TipoVeiculo)
-                .WithMany(t => t.Veiculos)
-                .HasForeignKey(v => v.TipoVeiculoId);
-                
-            modelBuilder.Entity<Ticket>()
-                .HasOne(t => t.Veiculo)
-                .WithMany()
-                .HasForeignKey(t => t.VeiculoId);
-                
-            modelBuilder.Entity<Vaga>()
-                .HasOne(v => v.Veiculo)
-                .WithMany()
-                .HasForeignKey(v => v.VeiculoId);
+
+            // Configuração para Vaga
+            modelBuilder.Entity<Vaga>(entity =>
+            {
+                // Garante que o TipoVeiculo é obrigatório para Vaga
+                entity.HasOne(v => v.Tipo)
+                      .WithMany() // Ou WithMany(t => t.Vagas) se TipoVeiculo tiver uma coleção de Vagas
+                      .HasForeignKey(v => v.TipoVeiculoId)
+                      .IsRequired(); // TipoVeiculoId é Required no modelo Vaga.cs
+            });
+
+            // Configuração para Veiculo
+            modelBuilder.Entity<Veiculo>(entity =>
+            {
+                entity.HasOne(v => v.TipoVeiculo)
+                      .WithMany(t => t.Veiculos) // Assumindo que TipoVeiculo tem List<Veiculo> Veiculos
+                      .HasForeignKey(v => v.TipoVeiculoId)
+                      .IsRequired();
+            });
+
+            // Configuração para Ticket
+            modelBuilder.Entity<Ticket>(entity =>
+            {
+                entity.HasOne(t => t.Veiculo)
+                      .WithMany()
+                      .HasForeignKey(t => t.VeiculoId)
+                      .IsRequired();
+
+                entity.HasOne(t => t.Vaga) // Relação Ticket com Vaga
+                      .WithMany()
+                      .HasForeignKey(t => t.VagaId)
+                      .IsRequired();
+            });
         }
     }
 }

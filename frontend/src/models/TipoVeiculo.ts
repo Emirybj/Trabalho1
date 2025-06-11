@@ -1,6 +1,4 @@
-export interface TipoVeiculo
-{
+export interface TipoVeiculo {
     id: number;
     nome: string;
-    criadoEm: Date;
 }

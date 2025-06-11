@@ -5,34 +5,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trabalho1.Models;
 using Trabalho1.Data;
+using Microsoft.Extensions.Logging;
 
 namespace Trabalho1.Controllers
 {
-    [Route("api/[controller]")]  // Todas as rotas começam com /api/Vaga
+    [Route("api/[controller]")]
     [ApiController]
     public class VagaController : ControllerBase
     {
-        private readonly AppDbContext _context;  // Conexão com o banco de dados
+        private readonly AppDbContext _context;
+        private readonly ILogger<VagaController> _logger; // Logger injetado no construtor
 
-        public VagaController(AppDbContext context)
+        public VagaController(AppDbContext context, ILogger<VagaController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Vaga
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vaga>>> GetVagas()
         {
-            // Retorna todas as vagas do estacionamento
-            return await _context.Vagas.ToListAsync();
+            return await _context.Vagas
+                                 .Include(v => v.Tipo) // Inclui o TipoVeiculo relacionado
+                                 .ToListAsync();
         }
 
         // GET: api/Vaga/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] // O nome da ação é "GetVaga" por conta do padrão
         public async Task<ActionResult<Vaga>> GetVaga(int id)
         {
-            // Busca uma vaga específica pelo ID
-            var vaga = await _context.Vagas.FindAsync(id);
+            var vaga = await _context.Vagas
+                                     .Include(v => v.Tipo) // Inclui o TipoVeiculo ao buscar por ID
+                                     .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vaga == null)
             {
@@ -46,7 +51,6 @@ namespace Trabalho1.Controllers
         [HttpGet("Livres")]
         public async Task<ActionResult<IEnumerable<Vaga>>> GetVagasLivres()
         {
-            // Retorna apenas as vagas que estão livres (não ocupadas)
             return await _context.Vagas.Where(v => !v.Ocupada).ToListAsync();
         }
 
@@ -54,51 +58,85 @@ namespace Trabalho1.Controllers
         [HttpPost]
         public async Task<ActionResult<Vaga>> PostVaga(Vaga vaga)
         {
+            _logger.LogInformation("Recebida requisição POST para Vaga: Número={NumeroVaga}, TipoID={TipoId}", vaga.Numero, vaga.TipoVeiculoId);
+
+            // Se o ModelState não for válido, vai retornar BadRequest com os erros
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Falha de validação do modelo para Vaga. Erros: {@ValidationErrors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return BadRequest(ModelState);
+            }
+
             // Verifica se já existe vaga com esse número
             if (_context.Vagas.Any(v => v.Numero == vaga.Numero))
             {
+                _logger.LogWarning("Tentativa de cadastrar vaga com número duplicado: {Numero}", vaga.Numero);
                 return BadRequest("Já existe uma vaga com este número.");
             }
 
-            // Nova vaga sempre começa como livre
+            // Verifica se o TipoVeiculoId fornecido já existe no banco de dados
+            if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == vaga.TipoVeiculoId))
+            {
+                _logger.LogWarning("Tentativa de cadastrar vaga com TipoVeiculoId inválido: {TipoId}", vaga.TipoVeiculoId);
+                return BadRequest("Tipo de veículo inválido.");
+            }
+
+            // Define status inicial para nova vaga
             vaga.Ocupada = false;
-            vaga.VeiculoId = null;
+            vaga.VeiculoId = null; // Vaga nova que não tem veículo associado
 
             _context.Vagas.Add(vaga);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Vaga {NumeroVaga} cadastrada com sucesso. ID: {VagaId}", vaga.Numero, vaga.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao salvar nova vaga no banco de dados.");
+                return StatusCode(500, "Erro interno ao salvar a vaga.");
+            }
 
-            return CreatedAtAction(nameof(GetVaga), new { id = vaga.Id }, vaga);
+            // Vai retorna 201 Created com a URL para a nova vaga criada
+            // GetVaga é o nome da ação que busca uma única vaga por ID.
+            return CreatedAtAction("GetVaga", new { id = vaga.Id }, vaga);
         }
 
         // PUT: api/Vaga/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVaga(int id, Vaga vaga)
         {
-            // Verifica se o ID da URL bate com o da vaga
             if (id != vaga.Id)
             {
                 return BadRequest("ID da vaga não confere.");
             }
 
-            // Verifica se a vaga existe
+            if (!ModelState.IsValid) // Adiciona validação para o PUT também
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Verifiqua se o TipoVeiculoId é válido ao atualizar
+            if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == vaga.TipoVeiculoId))
+            {
+                return BadRequest("Tipo de veículo inválido.");
+            }
+
             var vagaExistente = await _context.Vagas.FindAsync(id);
             if (vagaExistente == null)
             {
                 return NotFound("Vaga não encontrada.");
             }
 
-            // Atualiza apenas os campos permitidos
+            // Atualiza apenas as propriedades que podem ser alteradas externamente
             vagaExistente.Numero = vaga.Numero;
-            vagaExistente.Ocupada = vaga.Ocupada;
-
-            // Se está marcando como livre, remove o veículo
-            if (!vaga.Ocupada)
-            {
-                vagaExistente.VeiculoId = null;
-            }
+            vagaExistente.Andar = vaga.Andar;
+            vagaExistente.Setor = vaga.Setor;
+            vagaExistente.TipoVeiculoId = vaga.TipoVeiculoId; // Permite alterar o tipo da vaga
 
             try
             {
+                _context.Entry(vagaExistente).State = EntityState.Modified; // Marca como modificado
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -120,14 +158,12 @@ namespace Trabalho1.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVaga(int id)
         {
-            // Busca a vaga para deletar
             var vaga = await _context.Vagas.FindAsync(id);
             if (vaga == null)
             {
                 return NotFound("Vaga não encontrada.");
             }
 
-            // Não permite deletar vaga ocupada
             if (vaga.Ocupada)
             {
                 return BadRequest("Não é possível excluir vaga ocupada.");
@@ -141,8 +177,9 @@ namespace Trabalho1.Controllers
 
         private bool VagaExists(int id)
         {
-            // Método auxiliar para verificar se vaga existe
             return _context.Vagas.Any(e => e.Id == id);
         }
     }
 }
+
+    

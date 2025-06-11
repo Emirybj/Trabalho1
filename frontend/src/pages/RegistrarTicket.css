@@ -1,0 +1,139 @@
+.home-container { 
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+.home-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 2.2em;
+    font-weight: bold;
+}
+
+.parking-form .form-group {
+    margin-bottom: 20px;
+}
+
+.parking-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.parking-form input[type="text"],
+.parking-form input[type="number"],
+.parking-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box; /* Garante que padding não aumente a largura total */
+    transition: border-color 0.3s ease;
+}
+
+.parking-form input:focus,
+.parking-form select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.button.primary {
+    background-color: #3498db;
+}
+
+.button.primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading-message {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #e74c3c;
+    background-color: #fce4e4;
+    border: 1px solid #e74c3c;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.success-message {
+    color: #27ae60;
+    background-color: #e8f5e9;
+    border: 1px solid #27ae60;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.navigation-options {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; 
+    gap: 15px; 
+    flex-wrap: wrap; 
+}
+
+.button.secondary {
+    background-color: #95a5a6;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    flex-grow: 1; 
+    max-width: 250px; 
+}
+
+.button.secondary:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+/* Esconder o formulário quando há sucesso */
+.success-message + .parking-form {
+    display: none;
+}
+

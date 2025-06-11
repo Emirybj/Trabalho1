@@ -1,13 +1,15 @@
-import { TipoVeiculo } from "./TipoVeiculo";
+import { TipoVeiculo } from './TipoVeiculo';
 
+export interface Vaga {
+    id: number;
+    numero: number;
+    ocupada: boolean;
+    veiculoId?: number | null; 
+    
+    tipoVeiculoId: number; 
+    tipo?: TipoVeiculo; 
 
-export interface vaga{
-    id:string;
-    numero:number;
-    tipo:TipoVeiculo;
-    disponivel:boolean;
-    ocupadaporveiculoId: string | null;
-    andar?: string;
-    setor?: string;
-
+    andar?: string | null; 
+    setor?: string | null; 
+    
 }

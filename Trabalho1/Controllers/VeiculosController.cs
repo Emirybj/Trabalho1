@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Trabalho1.Data;
 using Trabalho1.Models;
 using System.Collections.Generic;
+using System.Linq; // Adicione este using
 using System.Threading.Tasks;
 
 namespace Trabalho1.Controllers
 {
     ///<summary>
-    /// Controlador para gerenciar veículos
+    /// Controlador para gerenciar ve\u00EDculos
     ///</summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -23,7 +24,7 @@ namespace Trabalho1.Controllers
         }
 
         ///<summary>
-        /// Retorna todos os veículos
+        /// Retorna todos os ve\u00EDculos
         /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Veiculo>>> GetVeiculos()
@@ -34,7 +35,7 @@ namespace Trabalho1.Controllers
         }
 
         ///<summary>
-        /// Retorna um veículo pelo ID
+        /// Retorna um ve\u00EDculo pelo ID
         ///</summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<Veiculo>> GetVeiculo(int id)
@@ -50,7 +51,7 @@ namespace Trabalho1.Controllers
         }
 
         ///<summary>
-        /// Atualiza os dados de um veículo
+        /// Atualiza os dados de um ve\u00EDculo
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVeiculo(int id, Veiculo veiculo)
@@ -61,13 +62,13 @@ namespace Trabalho1.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Verifica se o tipo de veículo existe
+            // Verifica se o tipo de ve\u00EDculo existe
             if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
-                return BadRequest("Tipo de veículo inválido");
+                return BadRequest("Tipo de ve\u00EDculo inv\u00E1lido");
 
-            // Verifica placa duplicada
+            // Verifica placa duplicada para outros ve\u00EDculos (excluindo o ve\u00EDculo atual)
             if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa && v.Id != veiculo.Id))
-                return BadRequest("Placa já cadastrada");
+                return BadRequest("Placa j\u00E1 cadastrada por outro ve\u00EDculo."); // Mensagem mais clara
 
             _context.Entry(veiculo).State = EntityState.Modified;
 
@@ -87,7 +88,7 @@ namespace Trabalho1.Controllers
         }
 
         ///<summary>
-        /// Adiciona um novo veículo
+        /// Adiciona um novo ve\u00EDculo
         /// </summary>
         [HttpPost]
         public async Task<ActionResult<Veiculo>> PostVeiculo(Veiculo veiculo)
@@ -95,13 +96,14 @@ namespace Trabalho1.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Verifica se tipo de veículo existe
+            // Verifica se tipo de ve\u00EDculo existe
             if (!await _context.TipoVeiculos.AnyAsync(t => t.Id == veiculo.TipoVeiculoId))
-                return BadRequest("Tipo de veículo inválido");
+                return BadRequest("Tipo de ve\u00EDculo inv\u00E1lido");
 
-            // Verifica placa duplicada
+            // === A REGRA DE VERIFICA\u00C7\u00C3O DE PLACA DUPLICADA ===
+            // Esta \u00E9 a linha que causa o problema se o ve\u00EDculo n\u00E3o foi REALMENTE removido ou se h\u00E1 um ticket \u00F3rf\u00E3o.
             if (await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa))
-                return BadRequest("Placa já cadastrada");
+                return BadRequest("Placa j\u00E1 cadastrada."); // Mensagem de erro que voc\u00EA est\u00E1 a ver.
 
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
@@ -110,7 +112,7 @@ namespace Trabalho1.Controllers
         }
 
         ///<summary>
-        /// Remove um veículo
+        /// Remove um ve\u00EDculo
         /// </summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVeiculo(int id)
@@ -118,7 +120,20 @@ namespace Trabalho1.Controllers
             var veiculo = await _context.Veiculos.FindAsync(id);
 
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Ve\u00EDculo n\u00E3o encontrado."); // Mensagem mais espec\u00EDfica
+
+            // === NOVO: Verifique se h\u00E1 tickets relacionados a este ve\u00EDculo ===
+            // Se h\u00E1 tickets para este ve\u00EDculo, n\u00E3o podemos simplesmente apag\u00E1-lo diretamente,
+            // ou a base de dados pode ficar inconsistente (tickets com VeiculoId inv\u00E1lido).
+            var hasRelatedTickets = await _context.Tickets.AnyAsync(t => t.VeiculoId == id);
+            if (hasRelatedTickets)
+            {
+                // Op\u00E7\u00E3o 1 (Mais segura): Retornar erro e exigir remo\u00E7\u00E3o dos tickets primeiro
+                return BadRequest("N\u00E3o \u00E9 poss\u00EDvel excluir o ve\u00EDculo, pois ele possui tickets no hist\u00F3rico.");
+
+                // Op\u00E7\u00E3o 2 (Mais complexa, requer revis\u00E3o de l\u00F3gica): Apagar tickets em cascata ou desvincular
+                // Para simplificar, a op\u00E7\u00E3o 1 \u00E9 mais clara para o usu\u00E1rio.
+            }
 
             _context.Veiculos.Remove(veiculo);
             await _context.SaveChangesAsync();
@@ -126,7 +141,7 @@ namespace Trabalho1.Controllers
             return NoContent();
         }
 
-        // Método auxiliar que verifica se veículo existe
+        // M\u00E9todo auxiliar que verifica se ve\u00EDculo existe
         private bool VeiculoExists(int id)
         {
             return _context.Veiculos.Any(e => e.Id == id);

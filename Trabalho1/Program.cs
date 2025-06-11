@@ -1,28 +1,38 @@
 using Microsoft.EntityFrameworkCore;
 using Trabalho1.Data;
-using System.Text.Json.Serialization; 
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder; 
+using Microsoft.Extensions.DependencyInjection; 
+using Microsoft.Extensions.Hosting; 
+using Microsoft.AspNetCore.Cors.Infrastructure; 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do banco de dados
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Adicionando serviços dos controllers e configurando a serialização JSON
 builder.Services.AddControllers()
-    .AddJsonOptions(options => 
+    .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.WriteIndented = true; 
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Adicionando serviços do Swagger
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+    options.AddPolicy("AcessoTotal", 
+        configs => configs
+            .AllowAnyOrigin()    
+            .AllowAnyHeader()    
+            .AllowAnyMethod())  
+);
+
 var app = builder.Build();
 
-// Configurar o pipeline HTTP
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -33,8 +43,11 @@ else
     app.UseHttpsRedirection();
 }
 
-app.UseAuthorization();
+app.UseCors("AcessoTotal"); 
 
-app.MapControllers();
+
+app.UseAuthorization(); 
+
+app.MapControllers(); 
 
 app.Run();

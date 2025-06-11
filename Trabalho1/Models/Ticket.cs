@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Trabalho1.Models //Ticket class
+namespace Trabalho1.Models
 {
     public class Ticket
     {
@@ -17,6 +17,15 @@ namespace Trabalho1.Models //Ticket class
         public int VeiculoId { get; set; }
 
         public Veiculo? Veiculo { get; set; }
-    }
 
+     /// ID da vaga associada a este ticket
+        [Required]
+        public int VagaId { get; set; }
+
+        /// Propriedade de navegação para a Vaga
+        public Vaga? Vaga { get; set; }
+
+        /// Indica se o ticket foi pago
+        public bool Pago { get; set; } = false; // Valor padrão como não pago
+    }
 }
