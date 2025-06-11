@@ -34,7 +34,7 @@ O back-end deve estar rodando **antes** de iniciar o front-end.
 
    ```bash
    git clone https://github.com/seuusuario/seuprojeto.git
-   cd Trabalho1/backend
+   cd Trabalho1/Trabalho1
    ```
 
 2. Restaure o banco e inicie a aplicação:
