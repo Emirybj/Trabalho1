@@ -31,10 +31,11 @@ Interface de usuário para o sistema de gerenciamento de estacionamento de veíc
     - deixe essa aba aberta pois precisa dela para rodar o npm start
 
 2. Abra outra aba no bash 
+    ```bash
     cd Documents
     cd Trabalho1
     cd frontend
-    npm start (ele abrira automaticamente na web)
+    npm start **ele abrira automaticamente na web**
 
 ## Ordem Sugerida Para Testar no Swagger
 1. Cadastrar Tipo de Veículo: http://localhost:3000/cadastrar-tipo-veiculo
