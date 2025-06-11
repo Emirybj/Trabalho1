@@ -37,7 +37,7 @@ Interface de usuário para o sistema de gerenciamento de estacionamento de veíc
     cd frontend
     npm start **ele abrira automaticamente na web**
 
-## Ordem Sugerida Para Testar no Swagger
+## Ordem Sugerida Para Testar na Web
 1. Cadastrar Tipo de Veículo: http://localhost:3000/cadastrar-tipo-veiculo
 2. Gerenciar Vagas: http://localhost:3000/cadastrar-vaga
 3. Registrar Ticket (Home): http://localhost:3000/
