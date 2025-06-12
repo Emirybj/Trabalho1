@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { TipoVeiculo } from '../models/TipoVeiculo'; 
 import './RegistrarTicket.css';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; // serve para navegar entre páginas da aplicação
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api"; 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api"; //Define a URL base da API
 
 function RegistrarTicket() {
     // Estados para os campos do formulário
@@ -18,7 +18,7 @@ function RegistrarTicket() {
     const [sucesso, setSucesso] = useState<string>(''); // Estado para exibir mensagens de sucesso
     const [carregando, setCarregando] = useState<boolean>(true); // Estado para controlar o carregamento de dados (tipos de veículo)
 
-    const navigate = useNavigate(); // Hook para navegar entre rotas da aplicação
+    const navigate = useNavigate(); // Hook para navegar entre rotas da aplicação, permite redirecionar o usuário para outras rotas
 
     // Efeito colateral para carregar os tipos de veículo assim que o componente é montado
     useEffect(() => {
@@ -33,7 +33,7 @@ function RegistrarTicket() {
                     setErro("Nenhum tipo de veículo disponível. Por favor, cadastre um na página 'Cadastrar Tipo de Veículo'."); // Mensagem se não houver tipos
                 }
             })
-            .catch(error => {
+            .catch(error => {//Em caso de erro de rede ou falha da API, exibe uma mensagem
                 console.error("Erro ao carregar tipos de veículo:", error); // Loga o erro no console
                 setErro("Erro ao carregar tipos de veículo. Verifique sua conexão ou tente novamente."); // Mensagem de erro para o usuário
             })
@@ -88,12 +88,12 @@ function RegistrarTicket() {
                 } else if (error.response.data.title) {
                     setErro(`Erro ao registrar ticket: ${error.response.data.title} - ${error.response.data.detail || ''}`);
                 } else if (error.response.data.errors) {
-                    const validationErrors = Object.values(error.response.data.errors).flat();
+                    const validationErrors = Object.values(error.response.data.errors).flat();//Lista de erros de validação (ex: campo obrigatório)
                     setErro(`Erro de validação: ${validationErrors.join(' ')}`);
                 } else {
                     setErro("Erro ao registrar ticket. Verifique os dados e tente novamente.");
                 }
-            } else if (error.request) {
+            } else if (error.request) {//Se for um problema de rede ou outro erro desconhecido, mostra uma mensagem apropriada
                 setErro("Erro de rede: Não foi possível conectar ao servidor. Verifique sua conexão.");
             } else {
                 setErro("Erro na configuração da requisição. Tente novamente.");
