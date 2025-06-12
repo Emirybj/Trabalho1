@@ -101,8 +101,8 @@ function HistoricoTickets() {//Cria 3 estados
         <div className="historico-tickets-container">
             <h1 className="page-title">Histórico de Tickets</h1>
 
-            {carregando && <p className="loading-message">Carregando histórico de tickets...</p>} {/*exibe uma mensagem de carregamento*/}
-            {erro && <p className="error-message">{erro}</p>} {/*mostra a mensagem de erro*/}
+            {carregando && <p className="loading-message">Carregando histórico de tickets...</p>} 
+            {erro && <p className="error-message">{erro}</p>} 
 
             {!carregando && tickets.length === 0 && !erro && (
                 <p className="no-records-message">Nenhum ticket encontrado no histórico.</p>
@@ -112,7 +112,7 @@ function HistoricoTickets() {//Cria 3 estados
                 <div className="table-responsive">
                     <table className="tickets-table">
                         <thead>
-                            <tr>{/*Define os nomes das colunas da tabela*/}
+                            <tr>
                                 <th>ID</th>
                                 <th>Placa do Veículo</th>
                                 <th>ID Vaga</th>
@@ -123,7 +123,7 @@ function HistoricoTickets() {//Cria 3 estados
                             </tr>
                         </thead>
                         <tbody>
-                            {tickets.map(ticket => ({/*Usa .map() para iterar sobre cada ticket e renderizar uma linha por vez*/}
+                            {tickets.map(ticket => (
                                 <tr key={ticket.id}>
                                     <td data-label="ID">{ticket.id}</td>
                                     <td data-label="Placa do Veículo">{ticket.veiculo?.placa || ticket.veiculoId || "N/A"}</td>
