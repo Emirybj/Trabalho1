@@ -18,7 +18,8 @@ function App() {
 
         <main className="app-main-content">
           <Routes>
-            <Route path="/registrar" element={<RegistrarTicket />} />
+            <Route path="/" element={<RegistrarTicket />} />
+            <Route path="/vagas" element={<ListarVagas/>} />
             <Route path="/retirar" element={<RetirarVeiculo />} />
             <Route path="/historico" element={<HistoricoTickets />} />
             <Route path="/cadastrar-tipo-veiculo" element={<CadastroTipoVeiculo />} />
