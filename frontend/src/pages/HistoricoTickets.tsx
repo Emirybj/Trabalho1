@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';//Executa um código quando o componente é montado
+import axios from 'axios';//Biblioteca para fazer requisições HTTP (GET, POST, etc).
 import { Ticket } from '../models/Ticket'; 
 import { Veiculo } from '../models/Veiculo'; 
 import './historico-tickets-modulo.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5285/api";//define a URL base da API, primeiro .env ou o localhost
 
 /**
  * @interface RawTicketBackend
  * @description Define como os dados de ticket chegam **diretamente do backend**.
  * É diferente do modelo `Ticket` do frontend porque o backend pode ter nomes de campos ou estruturas ligeiramente diferentes.
  */
-interface RawTicketBackend {
+interface RawTicketBackend {//Interface auxiliar, como os dados vêm do backend.
     id: number;
     veiculoId: number;
     vagaId: number | null;
@@ -63,7 +63,7 @@ const transformTicketData = (rawTicket: RawTicketBackend): Ticket => {
     };
 };
 
-function HistoricoTickets() {
+function HistoricoTickets() {//Cria 3 estados
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [erro, setErro] = useState<string>('');
     const [carregando, setCarregando] = useState<boolean>(true);
@@ -82,16 +82,16 @@ function HistoricoTickets() {
                 setErro("Erro ao carregar tickets. Verifique sua conexão ou tente novamente.");
             })
             .finally(() => setCarregando(false));
-    }, []);
+    }, []);//garante que execute só uma vez.
 
-    const formatarData = (dataString: string | null | undefined): string => {
+    const formatarData = (dataString: string | null | undefined): string => {//Converte string de data para formato legível brasileiro
         if (!dataString) return '';
         const data = new Date(dataString);
         if (isNaN(data.getTime())) return 'Data Inválida';
         return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     };
 
-    const formatarValor = (valor: number | undefined): string => {
+    const formatarValor = (valor: number | undefined): string => {Formata um número para valor monetário brasileiro
         return valor !== undefined && valor !== null ?
             `R$ ${valor.toFixed(2).replace('.', ',')}` :
             "-";
@@ -101,8 +101,8 @@ function HistoricoTickets() {
         <div className="historico-tickets-container">
             <h1 className="page-title">Histórico de Tickets</h1>
 
-            {carregando && <p className="loading-message">Carregando histórico de tickets...</p>}
-            {erro && <p className="error-message">{erro}</p>}
+            {carregando && <p className="loading-message">Carregando histórico de tickets...</p>} {/*exibe uma mensagem de carregamento*/}
+            {erro && <p className="error-message">{erro}</p>} {/*mostra a mensagem de erro*/}
 
             {!carregando && tickets.length === 0 && !erro && (
                 <p className="no-records-message">Nenhum ticket encontrado no histórico.</p>
@@ -112,7 +112,7 @@ function HistoricoTickets() {
                 <div className="table-responsive">
                     <table className="tickets-table">
                         <thead>
-                            <tr>
+                            <tr>{/*Define os nomes das colunas da tabela*/}
                                 <th>ID</th>
                                 <th>Placa do Veículo</th>
                                 <th>ID Vaga</th>
@@ -123,7 +123,7 @@ function HistoricoTickets() {
                             </tr>
                         </thead>
                         <tbody>
-                            {tickets.map(ticket => (
+                            {tickets.map(ticket => ({/*Usa .map() para iterar sobre cada ticket e renderizar uma linha por vez*/}
                                 <tr key={ticket.id}>
                                     <td data-label="ID">{ticket.id}</td>
                                     <td data-label="Placa do Veículo">{ticket.veiculo?.placa || ticket.veiculoId || "N/A"}</td>
