@@ -91,7 +91,7 @@ function HistoricoTickets() {//Cria 3 estados
         return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     };
 
-    const formatarValor = (valor: number | undefined): string => {Formata um número para valor monetário brasileiro
+    const formatarValor = (valor: number | undefined): string => {//Formata um número para valor monetário brasileiro
         return valor !== undefined && valor !== null ?
             `R$ ${valor.toFixed(2).replace('.', ',')}` :
             "-";
